@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANIGO GAME</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:
+    linear-gradient(
+    135deg,
+    #ffe4f1,
+    #e6f4ff,
+    #f5ebff);
+}
+
+/* 메뉴 */
+
+header{
+    padding:20px;
+}
+
+nav{
+    max-width:1200px;
+    margin:auto;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    padding:20px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#555;
+    font-size:20px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#ff66b2;
+}
+
+/* 메인 */
+
+.hero{
+    text-align:center;
+    padding:120px 20px;
+}
+
+/* 무지개 제목 */
+
+.hero h1{
+
+    font-size:90px;
+    font-weight:900;
+
+    background:linear-gradient(
+    90deg,
+    #ff69b4,
+    #ffb347,
+    #ffff66,
+    #66ff99,
+    #66ccff,
+    #9999ff,
+    #cc99ff,
+    #ff69b4);
+
+    background-size:400% auto;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:
+    rainbow 5s linear infinite,
+    sparkle 2s ease-in-out infinite;
+}
+
+/* 무지개 이동 */
+
+@keyframes rainbow{
+    0%{
+        background-position:0%;
+    }
+    100%{
+        background-position:400%;
+    }
+}
+
+/* 반짝 + 사라졌다 나타남 */
+
+@keyframes sparkle{
+
+    0%{
+        opacity:1;
+        filter:drop-shadow(0 0 10px #fff);
+    }
+
+    25%{
+        opacity:.7;
+        filter:drop-shadow(0 0 25px #fff);
+    }
+
+    50%{
+        opacity:.3;
+        filter:drop-shadow(0 0 40px #fff);
+    }
+
+    75%{
+        opacity:.8;
+        filter:drop-shadow(0 0 25px #fff);
+    }
+
+    100%{
+        opacity:1;
+        filter:drop-shadow(0 0 10px #fff);
+    }
+}
+
+.hero p{
+    margin-top:20px;
+    font-size:34px;
+    font-weight:bold;
+    color:#4b5563;
+}
+
+/* 카드 */
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:50px 20px;
+}
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+    gap:30px;
+}
+
+.card{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+
+    transition:.4s;
+}
+
+.card:hover{
+
+    transform:translateY(-12px);
+
+    box-shadow:
+    0 15px 40px rgba(255,105,180,.35);
+}
+
+.card h2{
+
+    margin-bottom:15px;
+
+    color:#ff66b2;
+}
+
+.card p{
+
+    color:#666;
+    line-height:1.7;
+}
+
+.btn{
+
+    display:inline-block;
+
+    margin-top:20px;
+
+    background:#ff8dc7;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:30px;
+
+    transition:.3s;
+}
+
+.btn:hover{
+
+    background:#ff66b2;
+}
+
+/* 하단 */
+
+footer{
+
+    text-align:center;
+
+    padding:40px;
+
+    color:#666;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<nav>
+
+<a href="index.html">🏠 홈</a>
+<a href="club.html">🎮 동아리</a>
+<a href="dormitory.html">🏠 기숙사</a>
+<a href="cafeteria.html">🍱 식당</a>
+
+</nav>
+
+</header>
+
+<section class="hero">
+
+<h1>ANIGO GAME</h1>
+
+<p>꿈을 플레이하고 미래를 제작하다</p>
+
+</section>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+
+<h2>🎮 동아리 소개</h2>
+
+<p>
+게임 제작과 e스포츠 활동을 통해
+실력을 키우는 공간입니다.
+</p>
+
+<a href="club.html" class="btn">
+자세히 보기
+</a>
+
+</div>
+
+<div class="card">
+
+<h2>🏠 기숙사 소개</h2>
+
+<p>
+안전하고 쾌적한 생활 환경에서
+즐거운 학교생활을 할 수 있습니다.
+</p>
+
+<a href="dormitory.html" class="btn">
+자세히 보기
+</a>
+
+</div>
+
+<div class="card">
+
+<h2>🍱 식당 소개</h2>
+
+<p>
+맛있고 건강한 식사로
+게임 개발의 에너지를 충전하세요.
+</p>
+
+<a href="cafeteria.html" class="btn">
+자세히 보기
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+애니고 게임학과 소개 홈페이지
+
+</footer>
+
+</body>
+</html>
