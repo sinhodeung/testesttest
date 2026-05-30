@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>운명의 타이밍</title>
+<style>
+body{font-family:Arial;margin:0;background:linear-gradient(135deg,#ffe0f0,#e8f4ff);text-align:center}
+.wrap{max-width:900px;margin:20px auto;background:#fff;padding:20px;border-radius:20px;box-shadow:0 4px 15px rgba(0,0,0,.15)}
+#bar{width:700px;max-width:95%;height:18px;background:#ddd;margin:30px auto;position:relative;border-radius:20px}
+#marker{position:absolute;width:36px;height:36px;border-radius:50%;background:#6c63ff;top:-9px}
+#center{position:absolute;left:50%;width:4px;height:50px;background:red;top:-16px}
+button{padding:10px 15px;margin:5px;border:none;border-radius:10px;cursor:pointer}
+.hidden{display:none}
+#msg{min-height:40px;font-size:22px;font-weight:bold}
+table{margin:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎯 운명의 타이밍</h1>
+<div>최고기록: <span id="best"></span></div>
+<div>라운드 <span id="round">0</span>/5 | 총점 <span id="total">0</span> | 시간 <span id="time">5</span></div>
+
+<div id="bar">
+<div id="center"></div>
+<div id="marker"></div>
+</div>
+
+<div id="msg">게임 시작을 누르세요.</div>
+<button id="startBtn">게임 시작</button>
+
+<div id="timingResult" class="hidden">
+<h2>타이밍 결과</h2>
+<div id="scoreList"></div>
+<h3>총점: <span id="timingTotal"></span></h3>
+<button onclick="showRPS()">가위바위보 시작</button>
+</div>
+
+<div id="rps" class="hidden">
+<h2>가위바위보</h2>
+<p>점수: <span id="rpsScore"></span> | 승수: <span id="wins">0</span>/3</p>
+<input id="bet" type="number" value="50">
+<button onclick="setAllIn()">ALL-IN</button><br><br>
+<button onclick="play('가위')">가위</button>
+<button onclick="play('바위')">바위</button>
+<button onclick="play('보')">보</button>
+<p id="rpsMsg"></p>
+</div>
+</div>
+
+<script>
+const bestEl=best;
+bestEl.textContent=localStorage.getItem("bestScore")||0;
+
+let round=0,totalScore=0,scores=[];
+let pos=0,dir=1,anim=null,timer=null,timeLeft=5;
+let active=false,wins=0;
+const speeds=[3,5,7,10,14];
+
+startBtn.onclick=()=>{
+ clearAll();
+ round=0; totalScore=0; scores=[]; wins=0;
+ total.textContent=0;
+ timingResult.classList.add('hidden');
+ rps.classList.add('hidden');
+ nextRound();
+};
+
+function clearAll(){
+ active=false;
+ if(anim) cancelAnimationFrame(anim);
+ clearInterval(timer);
+}
+
+function nextRound(){
+ round++;
+ if(round>5){ finishTiming(); return; }
+
+ document.getElementById("round").textContent=round;
+ msg.textContent="스페이스바를 눌러 중앙을 맞추세요!";
+ timeLeft=5;
+ time.textContent=timeLeft;
+
+ const barW=bar.clientWidth;
+ const ballW=marker.offsetWidth;
+ pos=0; dir=1;
+ active=true;
+
+ function move(){
+   if(!active) return;
+   pos += dir*speeds[round-1];
+   if(pos>=barW-ballW){pos=barW-ballW;dir=-1;}
+   if(pos<=0){pos=0;dir=1;}
+   marker.style.left=pos+"px";
+   anim=requestAnimationFrame(move);
+ }
+ move();
+
+ timer=setInterval(()=>{
+   timeLeft--;
+   time.textContent=timeLeft;
+   if(timeLeft<=0){
+      scoreRound(0,"시간초과");
+   }
+ },1000);
+}
+
+function scoreRound(score,text){
+ if(!active) return;
+ active=false;
+ cancelAnimationFrame(anim);
+ clearInterval(timer);
+
+ scores.push(score);
+ totalScore+=score;
+
+ total.textContent=totalScore;
+ msg.textContent=text+" : "+score+"점";
+
+ setTimeout(()=>nextRound(),1200);
+}
+
+document.addEventListener("keydown",e=>{
+ if(e.code!=="Space" || !active) return;
+
+ const center=(bar.clientWidth-marker.offsetWidth)/2;
+ const d=Math.abs(pos-center);
+
+ let score=20,grade="MISS";
+ if(d<=5){score=100;grade="PERFECT";}
+ else if(d<=15){score=90;grade="GREAT";}
+ else if(d<=30){score=70;grade="GOOD";}
+ else if(d<=50){score=50;grade="OK";}
+
+ scoreRound(score,grade);
+});
+
+function finishTiming(){
+ let html="<table>";
+ scores.forEach((s,i)=>html+=`<tr><td>${i+1}회</td><td>${s}점</td></tr>`);
+ html+="</table>";
+ scoreList.innerHTML=html;
+ timingTotal.textContent=totalScore;
+ timingResult.classList.remove("hidden");
+ msg.textContent="타이밍 게임 완료!";
+}
+
+function showRPS(){
+ rps.classList.remove("hidden");
+ rpsScore.textContent=totalScore;
+ wins=0;
+ document.getElementById("wins").textContent=0;
+}
+
+function setAllIn(){ bet.value=totalScore; }
+
+function play(me){
+ let b=parseInt(bet.value)||0;
+ if(b<1) return;
+ if(b>totalScore) b=totalScore;
+
+ const arr=["가위","바위","보"];
+ const cpu=arr[Math.floor(Math.random()*3)];
+
+ let result="";
+ if(me===cpu){
+   result="무승부";
+ }else if(
+ (me==="가위"&&cpu==="보")||
+ (me==="바위"&&cpu==="가위")||
+ (me==="보"&&cpu==="바위")
+ ){
+   totalScore+=b;
+   wins++;
+   result="승리 +"+b;
+ }else{
+   totalScore=Math.max(0,totalScore-b);
+   result="패배 -"+b;
+ }
+
+ rpsScore.textContent=totalScore;
+ document.getElementById("wins").textContent=wins;
+ rpsMsg.textContent=`나:${me} / 컴:${cpu} → ${result}`;
+
+ if(wins>=3) finishGame();
+}
+
+function finishGame(){
+ let best=Number(localStorage.getItem("bestScore")||0);
+
+ if(totalScore>best){
+   localStorage.setItem("bestScore",totalScore);
+   document.body.innerHTML+=`
+   <div style="padding:30px">
+   <h1>🎆 NEW RECORD 🎆</h1>
+   <h2>${totalScore}점</h2>
+   </div>`;
+ }else{
+   const t=[
+   "분발하세요 😏",
+   "최고기록은 아직 멀었습니다 😆",
+   "다음 도전을 기대합니다 😎"];
+   document.body.innerHTML+=`
+   <div style="padding:30px">
+   <h1>${t[Math.floor(Math.random()*t.length)]}</h1>
+   <h2>최종점수 ${totalScore}</h2>
+   </div>`;
+ }
+}
+</script>
+</body>
+</html>
